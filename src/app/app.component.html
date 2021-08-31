@@ -1,0 +1,15 @@
+<hello name="{{ name }}"></hello>
+<p>
+  Start editing to see some magic happen :)
+</p>
+
+<div>
+  <div *ngFor="let cartControl of cartControlGroups; index as i">
+    <ng-container [formGroup]="cartControl">
+      <input type="number" formControlName="quantity" />
+      <input type="checkbox" formControlName="isFashShipping" />
+      <button (click)="onDeleteCartControl(i)">X</button>
+    </ng-container>
+  </div>
+  <button [disabled]="!isCartControlGrupsValid()"> Submit cart </button>
+</div>
