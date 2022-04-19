@@ -1,18 +1,25 @@
 import { Component, OnInit, VERSION } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
+interface Product {
+  productId: number;
+  quantity: number;
+  name: string;
+  isFastShipping: boolean;
+}
+
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
   public mockData = [
-    { productId: 100, quantity: 1, isFastShipping: true },
-    { productId: 10, quantity: 5, isFastShipping: false },
-    { productId: 25, quantity: 6, isFastShipping: true },
-    { productId: 66, quantity: 10, isFastShipping: false }
-  ];
+    { name: 'name1', productId: 100, quantity: 1, isFastShipping: true },
+    { name: 'name2', productId: 10, quantity: 5, isFastShipping: false },
+    { name: 'name3', productId: 25, quantity: 6, isFastShipping: true },
+    { name: 'name4', productId: 66, quantity: 10, isFastShipping: false },
+  ] as Product[];
   private _cartControlGroups: FormArray;
 
   constructor() {
@@ -20,18 +27,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mockData.forEach(data =>
+    this.mockData.forEach((data) =>
       this._cartControlGroups.push(
         new FormGroup({
+          productId: new FormControl(data.productId),
+          name: new FormControl(data.name),
           quantity: new FormControl(data.quantity, [
             Validators.min(1),
-            Validators.max(10)
+            Validators.max(10),
           ]),
-          isFashShipping: new FormControl(data.isFastShipping)
+          isFashShipping: new FormControl(data.isFastShipping),
         })
       )
     );
-    console.log(this._cartControlGroups.controls);
+    console.log(
+      (this._cartControlGroups.controls[0] as FormGroup).get('name').value
+    );
   }
 
   get cartControlGroups(): FormGroup[] {
@@ -44,6 +55,12 @@ export class AppComponent implements OnInit {
 
   isCartControlGrupsValid() {
     return this._cartControlGroups.status === 'VALID';
+  }
+
+  onCartSubmit() {
+    this.cartControlGroups.forEach((productFormGroup) => {
+      console.log(productFormGroup.value as Product);
+    });
   }
 
   name = 'Angular ' + VERSION.major;
